@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Обратный отсчёт ❤️</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
+            background: linear-gradient(180deg, #fef9f0 0%, #fde8ec 30%, #f8e0f0 60%, #e8e0f8 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #444;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 680px;
+            width: 100%;
+            background: rgba(255,255,255,0.78);
+            border-radius: 35px;
+            padding: 45px 28px;
+            box-shadow: 0 15px 50px rgba(180,140,160,0.18);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(255,255,255,0.7);
+            position: relative;
+            z-index: 5;
+            min-height: 500px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+            background: linear-gradient(45deg, #e91e63, #9c27b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-weight: 400;
+            margin-bottom: 20px;
+            color: #9c27b0;
+        }
+
+        /* ===== ГИРЛЯНДА ===== */
+        .garland {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin: 10px 0 40px 0;
+            padding: 0;
+        }
+
+        .flag {
+            display: inline-block;
+            padding: 10px 8px;
+            min-width: 42px;
+            border-radius: 10px 10px 4px 4px;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #555;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+            position: relative;
+            letter-spacing: 1px;
+        }
+
+        .flag::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 14px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 0 0 2px 2px;
+        }
+
+        .flag:nth-child(1)  { background: #ffd1dc; }
+        .flag:nth-child(2)  { background: #ffecd2; }
+        .flag:nth-child(3)  { background: #d4f0f0; }
+        .flag:nth-child(4)  { background: #e8dff5; }
+        .flag:nth-child(5)  { background: #fff0d4; }
+        .flag:nth-child(6)  { background: #fde0e8; }
+        .flag:nth-child(7)  { background: #daeaf6; }
+        .flag:nth-child(8)  { background: #f5e0f0; }
+        .flag:nth-child(9)  { background: #fff5d6; }
+        .flag:nth-child(10) { background: #e0f0e0; }
+        .flag:nth-child(11) { background: #fde4e4; }
+        .flag:nth-child(12) { background: #e8e8f0; }
+        .flag:nth-child(13) { background: #fef0dc; }
+        .flag:nth-child(14) { background: #f0e0ec; }
+
+        /* ===== ТАЙМЕР ===== */
+        .timer-grid {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .timer-box {
+            background: rgba(255,255,255,0.75);
+            padding: 18px 12px;
+            border-radius: 18px;
+            min-width: 75px;
+            border: 2px solid rgba(233,30,99,0.22);
+            box-shadow: 0 5px 15px rgba(233,30,99,0.1);
+        }
+
+        .timer-number {
+            font-size: 2.8em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #e91e63, #9c27b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .timer-label {
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #9c27b0;
+            font-weight: bold;
+        }
+
+        /* ===== ФОТО ===== */
+        .photo {
+            width: 85%;
+            max-width: 320px;
+            border-radius: 25px;
+            margin: 15px auto 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: block;
+            border: 3px solid white;
+        }
+
+        /* ===== СВЕЧКА ===== */
+        .candle-area {
+            margin: 35px auto 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .candle-body {
+            width: 50px;
+            height: 120px;
+            background: linear-gradient(180deg, #fff8f0, #ffe0c0, #f5c6a0, #e8b88a);
+            border-radius: 8px 8px 3px 3px;
+            position: relative;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.06);
+            transition: background 0.5s;
+        }
+
+        .candle-body.blown {
+            background: linear-gradient(180deg, #e8e0e0, #d5cdcd, #bdb5b5, #a89898);
+        }
+
+        .wick {
+            width: 3px;
+            height: 14px;
+            background: #4a4a4a;
+            margin: 0 auto;
+            border-radius: 1px;
+        }
+
+        .flame {
+            width: 24px;
+            height: 38px;
+            background: radial-gradient(ellipse at bottom, #ff9c00, #ffcc00 40%, #fff4b0 75%, transparent 95%);
+            border-radius: 50% 50% 20% 20% / 60% 60% 30% 30%;
+            margin: -5px auto 0;
+            animation: flicker 0.25s infinite alternate;
+            transition: opacity 0.6s;
+            box-shadow: 0 0 22px rgba(255,160,0,0.55), 0 0 45px rgba(255,200,0,0.3);
+        }
+
+        .flame.out {
+            opacity: 0;
+            animation: none;
+            box-shadow: none;
+        }
+
+        @keyframes flicker {
+            0%   { transform: scale(1, 1) rotate(-3deg); }
+            50%  { transform: scale(1.12, 0.88) rotate(3deg); }
+            100% { transform: scale(1, 1.06) rotate(-1deg); }
+        }
+
+        .candle-hint {
+            font-size: 0.9em;
+            color: #b39ddb;
+            margin-top: 8px;
+            font-style: italic;
+            transition: all 0.4s;
+        }
+
+        /* ===== ВИДЕО ===== */
+        .video-box {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            margin: 20px 0 8px 0;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .video-box iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            border: none;
+        }
+
+        .video-caption {
+            font-size: 0.95em;
+            color: #9c27b0;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        /* ===== КНОПКИ ===== */
+        button {
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 12px 8px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+        }
+
+        button:active {
+            transform: scale(0.94);
+        }
+
+        /* Продолжить */
+        .btn-next {
+            background: linear-gradient(45deg, #f8bbd0, #e1bee7);
+            color: #6a1b3d;
+            font-size: 1.15em;
+            padding: 13px 40px;
+            box-shadow: 0 5px 18px rgba(200,140,170,0.4);
+        }
+        .btn-next:hover { box-shadow: 0 10px 25px rgba(200,140,170,0.6); }
+
+        /* Да */
+        .btn-yes {
+            background: linear-gradient(45deg, #b9fbc0, #a5d6a7);
+            color: #1b5e20;
+            font-size: 1.2em;
+            padding: 15px 45px;
+            box-shadow: 0 5px 18px rgba(130,200,140,0.4);
+        }
+        .btn-yes:hover { box-shadow: 0 10px 25px rgba(130,200,140,0.6); }
+
+        /* Нет */
+        .btn-no {
+            background: linear-gradient(45deg, #ffe0b2, #ffcc80);
+            color: #7b3f00;
+            font-size: 1.2em;
+            padding: 15px 45px;
+            box-shadow: 0 5px 18px rgba(220,170,110,0.4);
+        }
+        .btn-no:hover { box-shadow: 0 10px 25px rgba(220,170,110,0.6); }
+
+        /* Уверена? */
+        .btn-sure {
+            background: linear-gradient(45deg, #e8d5f5, #ce93d8);
+            color: #4a148c;
+            font-size: 1.15em;
+            padding: 13px 40px;
+            box-shadow: 0 5px 18px rgba(170,130,200,0.4);
+        }
+        .btn-sure:hover { box-shadow: 0 10px 25px rgba(170,130,200,0.6); }
+
+        /* Люблю */
+        .btn-love {
+            background: linear-gradient(45deg, #ff8a9e, #f48fb1);
+            color: #fff;
+            font-size: 1.2em;
+            padding: 14px 38px;
+            box-shadow: 0 5px 18px rgba(240,130,150,0.4);
+        }
+        .btn-love:hover { box-shadow: 0 10px 25px rgba(240,130,150,0.6); }
+
+        .secret {
+            background: linear-gradient(135deg, #fce4ec, #f3e5f5);
+            padding: 24px 20px;
+            border-radius: 22px;
+            margin-top: 18px;
+            font-size: 1.2em;
+            color: #880e4f;
+            font-weight: bold;
+            border: 2px dashed #e91e63;
+            line-height: 1.7;
+        }
+
+        .sad-dog {
+            font-size: 6em;
+            margin: 20px 0 10px;
+            animation: sadBounce 1.5s infinite;
+        }
+
+        @keyframes sadBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .sad-text {
+            font-size: 1.2em;
+            color: #9c27b0;
+            margin: 10px 0 20px;
+            font-weight: 500;
+        }
+
+        #counter {
+            font-size: 2em;
+            background: linear-gradient(45deg, #e91e63, #9c27b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+        }
+
+        .hearts-row {
+            font-size: 2em;
+            margin: 5px 0;
+            min-height: 45px;
+            word-break: break-all;
+        }
+
+        .footer {
+            margin-top: 35px;
+            opacity: 0.7;
+            font-style: italic;
+            color: #9c27b0;
+            font-size: 1.1em;
+        }
+
+        .locked-message {
+            font-size: 1.15em;
+            color: #9c27b0;
+            margin-top: 25px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .sparkle {
+            font-size: 1.5em;
+            animation: twinkle 1.5s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            color: #6a1b3d;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+
+        /* ПАДАЮЩИЕ СЕРДЕЧКИ */
+        .heart-rain {
+            position: fixed;
+            top: -60px;
+            font-size: 2em;
+            animation: fall linear forwards;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.85;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(105vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* ПЛАВАЮЩИЕ ЩЕНКИ */
+        .puppy {
+            position: fixed;
+            font-size: 2.2em;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatPuppy linear infinite;
+            opacity: 0.9;
+        }
+
+        @keyframes floatPuppy {
+            0%   { transform: translateX(0) translateY(0) rotate(0deg); }
+            25%  { transform: translateX(70px) translateY(-60px) rotate(8deg); }
+            50%  { transform: translateX(-30px) translateY(-120px) rotate(-5deg); }
+            75%  { transform: translateX(50px) translateY(-170px) rotate(3deg); }
+            100% { transform: translateX(0) translateY(-10vh) rotate(0deg); }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.7em; }
+            .timer-number { font-size: 2em; }
+            button { padding: 12px 25px; font-size: 1.05em; }
+            .container { padding: 25px 14px; }
+            .flag { font-size: 0.85em; min-width: 32px; padding: 8px 5px; }
+            .heart-rain { font-size: 1.4em; }
+            .puppy { font-size: 1.5em; }
+            .candle-body { height: 90px; }
+            .sad-dog { font-size: 4em; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainContainer">
+        <!-- Всё через JS -->
+    </div>
+
+    <script>
+        // =============================================
+        // НАСТРОЙКИ 
+        // =============================================
+        const birthday = new Date(2026, 4, 5, 0, 0, 0); 
+        // =============================================
+
+        const main = document.getElementById('mainContainer');
+        const now = new Date();
+
+        // ===== ФОНЫ: СЕРДЕЧКИ =====
+        function startHeartRain() {
+            const hearts = ['❤️', '💕', '💗', '💖', '💝', '💘', '💜', '🩷', '💞', '💓'];
+            const colors = ['#e91e63','#f06292','#ec407a','#ab47bc','#ce93d8','#f48fb1','#ff80ab','#ea80fc','#ff4081','#c2185b'];
+            function createHeart() {
+                const h = document.createElement('div');
+                h.classList.add('heart-rain');
+                h.textContent = hearts[Math.floor(Math.random()*hearts.length)];
+                h.style.left = Math.random()*100+'%';
+                h.style.fontSize = (Math.random()*2+1.2)+'em';
+                h.style.animationDuration = (Math.random()*4+4)+'s';
+                h.style.color = colors[Math.floor(Math.random()*colors.length)];
+                document.body.appendChild(h);
+                setTimeout(()=>h.remove(),9000);
+            }
+            setInterval(createHeart, 380);
+            // Первые несколько сразу
+            for(let i=0;i<5;i++) setTimeout(createHeart, i*200);
+        }
+
+        // ===== ФОНЫ: ЩЕНКИ =====
+        function startPuppies() {
+            const pups = ['🐶','🐕','🐩','🦮','🐾','🐕‍🦺'];
+            function createPuppy() {
+                const p = document.createElement('div');
+                p.classList.add('puppy');
+                p.textContent = pups[Math.floor(Math.random()*pups.length)];
+                p.style.left = Math.random()*90+'%';
+                p.style.bottom = '-80px';
+                p.style.fontSize = (Math.random()*1.8+1.2)+'em';
+                p.style.animationDuration = (Math.random()*10+12)+'s';
+                p.style.opacity = (Math.random()*0.4+0.5);
+                document.body.appendChild(p);
+                setTimeout(()=>p.remove(),23000);
+            }
+            setInterval(createPuppy, 2200);
+            for(let i=0;i<3;i++) setTimeout(createPuppy, i*700);
+        }
+
+        startHeartRain();
+        startPuppies();
+
+        // ===== ГИРЛЯНДА =====
+        function getGarlandHTML() {
+            const letters = ['С',' ','Д','Н','Ё','М',' ','Р','О','Ж','Д','Е','Н','И','Я'];
+            return `<div class="garland">${letters.map(l=>`<span class="flag">${l}</span>`).join('')}</div>`;
+        }
+
+        // ===== СТРАНИЦА 1: СВЕЧКА + ФОТО =====
+        function renderCandlePage() {
+            main.innerHTML = `
+                ${getGarlandHTML()}
+                <h1>🎂 С Днём Рождения!</h1>
+                <h2> ❤️</h2>
+
+                <!-- ФОТО -->
+                <img src="photo_1.jpg" alt="Мы вместе" class="photo" />
+
+                <p style="font-size:1.1em;color:#9c27b0;margin-bottom:5px;">Задуй свечку и загадай желание...</p>
+
+                <div class="candle-area" id="candleClickArea" onclick="blowCandle()" title="Кликни, чтобы задуть!">
+                    <div class="flame" id="flame"></div>
+                    <div class="wick"></div>
+                    <div class="candle-body" id="candleBody"></div>
+                    <div class="candle-hint" id="candleHint">🕯️ Кликни на свечку!</div>
+                </div>
+
+                <button class="btn-next" id="btnNext1" style="display:none;" onclick="goToVideoPage()">Продолжить ✨</button>
+            `;
+
+            window.blowCandle = function() {
+                const flame = document.getElementById('flame');
+                const body = document.getElementById('candleBody');
+                const hint = document.getElementById('candleHint');
+                const btn = document.getElementById('btnNext1');
+                if(flame && body && !flame.classList.contains('out')) {
+                    flame.classList.add('out');
+                    body.classList.add('blown');
+                    hint.textContent = '✨ Задула! Загадывай желание...';
+                    if(btn) btn.style.display = 'inline-block';
+                }
+            };
+        }
+
+        // ===== СТРАНИЦА 2: ВИДЕО + КНОПКИ ЛЮБЛЮ =====
+        function renderVideoPage() {
+            main.innerHTML = `
+                ${getGarlandHTML()}
+                <h1>🎬 что </h1>
+                <h2>(Изначально я хотела вставить бтс)</h2>
+
+                <div class="video-box">
+                    <iframe src="https://www.youtube.com/embed/QfFW7jAZh_k"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                            title="">
+                    </iframe>
+                </div>
+                <p class="video-caption">
+
+                <button class="btn-love" onclick="addLove()">💖 Тыкни, если любишь(мои сожаления) </button>
+                <p style="margin-top: 12px; font-size: 1.2em;">
+                    Любви нажато: <span id="counter">0</span>
+                </p>
+                <div class="hearts-row" id="heartsRow"></div>
+
+                <br />
+                <button class="btn-next" onclick="goToChoicePage()">Продолжить 💫</button>
+            `;
+
+            let count = 0;
+            window.addLove = function() {
+                count++;
+                document.getElementById('counter').textContent = count;
+                document.getElementById('heartsRow').textContent += '❤️';
+                if(count===1) alert('Всего лишь 1? надо же🙄');
+                if(count===10) alert('Ты нажала 10 раз! Ого! 🥰');
+                if(count===20) alert('20... зачем?🫤');
+                if(count===40) alert('Сорок?! Видимо у тебя очень много времени!!✨ Иди уже дальше!!!');
+            };
+        }
+
+        // ===== СТРАНИЦА 3: ВЫБОР ДА / НЕТ =====
+        function renderChoicePage() {
+            main.innerHTML = `
+                ${getGarlandHTML()}
+                <h1>💌 Секретное послание</h1>
+                <h2>Хочешь открыть?</h2>
+                <p class="question-text">Там что-то важное(кринжовое) для тебя...</p>
+                <div style="margin-top:20px;">
+                    <button class="btn-yes" onclick="goToSecretPage()">💝 Да!</button>
+                    <button class="btn-no" onclick="goToSadPage()">Нет(говна ответ)</button>
+                </div>
+            `;
+        }
+
+        // ===== СТРАНИЦА: ГРУСТНЫЙ ПЁСИК =====
+        function renderSadPage() {
+            main.innerHTML = `
+                ${getGarlandHTML()}
+                <h1> Чо...</h1>
+                <img src="sad_dog.jpg"></div>
+                <p class="sad-text">Ты точно не хочешь открыть послание?</p>
+                <p style="color:#9c27b0; opacity:0.7; margin-bottom:20px;">Никому я не ужин...</p>
+                <button class="btn-sure" onclick="goToChoicePage()">💜 Уверена?</button>
+            `;
+        }
+
+        // ===== СТРАНИЦА: ПОСЛАНИЕ =====
+        function renderSecretPage() {
+            main.innerHTML = `
+                ${getGarlandHTML()}
+                <h1>💌 Твоё послание</h1>
+                <div class="secret">
+                    Я ненавижу всю эту смазливую хрень и ты это прекрасно знаешь. <br />
+                    Людям никогда не суждено полностью принять кого-то другого, <br />
+                    Из-за их эгоизма, лени и тупости.<br />
+                    Тщетные попытки приводят к разочарованию, <br />
+                    Однако это не значит, что я не буду пытаться понять тебя <br />
+                    Даже если иногда для меня это будет слишком сложно. <br />
+                </div>
+                <p style="margin-top:25px; opacity:0.7; font-style:italic; color:#9c27b0;">
+                     твой щен 
+                </p>
+            `;
+        }
+
+        // ===== ПЕРЕХОДЫ =====
+        function goToVideoPage()  { renderVideoPage(); }
+        function goToChoicePage() { renderChoicePage(); }
+        function goToSadPage()    { renderSadPage(); }
+        function goToSecretPage() { renderSecretPage(); }
+
+        // ===== ЗАПУСК =====
+        if (now < birthday) {
+            // ТАЙМЕР
+            main.innerHTML = `
+                ${getGarlandHTML()}
+                <h1>🎁 эта хуйня</h1>
+                <h2>скоро откроется...</h2>
+
+                <div class="timer-grid">
+                    <div class="timer-box"><div class="timer-number" id="days">00</div><div class="timer-label">Дней</div></div>
+                    <div class="timer-box"><div class="timer-number" id="hours">00</div><div class="timer-label">Часов</div></div>
+                    <div class="timer-box"><div class="timer-number" id="minutes">00</div><div class="timer-label">Минут</div></div>
+                    <div class="timer-box"><div class="timer-number" id="seconds">00</div><div class="timer-label">Секунд</div></div>
+                </div>
+
+                <p class="locked-message">
+                    <span class="sparkle">✨</span>
+                    Вернись <strong id="targetDateStr"></strong>
+                    <span class="sparkle">✨</span>
+                </p>
+                <p style="opacity:0.6;margin-top:25px;font-style:italic;">Не подглядывай!</p>
+            `;
+
+            const opts = {day:'numeric',month:'long',year:'numeric'};
+            document.getElementById('targetDateStr').textContent = birthday.toLocaleDateString('ru-RU',opts);
+
+            function updateTimer(){
+                const diff = birthday - new Date();
+                if(diff<=0){location.reload();return;}
+                const d=Math.floor(diff/(1000*60*60*24));
+                const h=Math.floor((diff/(1000*60*60))%24);
+                const m=Math.floor((diff/(1000*60))%60);
+                const s=Math.floor((diff/1000)%60);
+                document.getElementById('days').textContent=String(d).padStart(2,'0');
+                document.getElementById('hours').textContent=String(h).padStart(2,'0');
+                document.getElementById('minutes').textContent=String(m).padStart(2,'0');
+                document.getElementById('seconds').textContent=String(s).padStart(2,'0');
+            }
+            setInterval(updateTimer,1000);
+            updateTimer();
+        } else {
+            // СТАРТ СО СВЕЧКИ
+            renderCandlePage();
+        }
+    </script>
+</body>
+</html>
